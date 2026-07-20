@@ -1,0 +1,197 @@
+/**
+ * PCOS Animation System — Keyframe Definitions
+ * ==============================================
+ * All animation keyframes for the PCOS interface.
+ * Consumed by: StatusPulse, Skeleton, Shell transitions.
+ *
+ * Authority:  PCOS_DESIGN_SYSTEM_FOUNDATION.md (Section 9)
+ * Version:    v0.5.0
+ *
+ * UXState Animation Map:
+ *   thinking    → pcos-orbital        (cyan ring, 6s orbit)
+ *   recalling   → pcos-recall-shimmer (violet pulse, 1.2s)
+ *   coding      → pcos-cursor-blink   (green cursor, 530ms)
+ *   planning    → pcos-node-connect   (amber dots, 1.5s)
+ *   writing     → pcos-flow-line      (white line, 1.8s)
+ *   researching → pcos-sweep          (blue sweep, 800ms)
+ *
+ * Rule: All animations use transform and opacity only.
+ * No width/height/top/left animations — GPU compositing only.
+ */
+
+/* =============================================================================
+   UXSTATE ANIMATIONS
+   ============================================================================= */
+
+/**
+ * pcos-orbital — thinking state
+ * Slow orbital rotation of a ring element around a central point.
+ * Communicates: the system is reasoning, something is in motion.
+ */
+@keyframes pcos-orbital {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/**
+ * pcos-recall-shimmer — recalling state
+ * Radial opacity pulse suggesting light emanating from stored knowledge.
+ * Communicates: memory is being surfaced.
+ * This is the most emotionally significant animation in PCOS.
+ */
+@keyframes pcos-recall-shimmer {
+  0%   { opacity: 0.4; transform: scale(0.95); }
+  100% { opacity: 1.0; transform: scale(1.05); }
+}
+
+/**
+ * pcos-cursor-blink — coding state
+ * Sharp on/off blink of a monospace cursor character.
+ * Communicates: precise, technical work is underway.
+ */
+@keyframes pcos-cursor-blink {
+  0%, 49%  { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/**
+ * pcos-node-connect — planning state
+ * Sequential fade-in of three nodes suggesting a plan forming.
+ * Communicates: structure and sequence being constructed.
+ */
+@keyframes pcos-node-connect {
+  0%   { opacity: 0.2; transform: scale(0.8); }
+  33%  { opacity: 1.0; transform: scale(1.0); }
+  66%  { opacity: 0.6; transform: scale(0.9); }
+  100% { opacity: 0.2; transform: scale(0.8); }
+}
+
+/**
+ * pcos-flow-line — writing state
+ * Horizontal line growing from left to right.
+ * Communicates: prose being composed, flowing text.
+ */
+@keyframes pcos-flow-line {
+  0%   { transform: scaleX(0); opacity: 0.3; }
+  50%  { transform: scaleX(1); opacity: 1.0; }
+  100% { transform: scaleX(0); opacity: 0.3; }
+}
+
+/**
+ * pcos-sweep — researching state
+ * Left-to-right luminance sweep across the element.
+ * Communicates: scanning, searching, inquiring.
+ */
+@keyframes pcos-sweep {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  50%  { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* =============================================================================
+   STANDARD TRANSITIONS
+   ============================================================================= */
+
+/**
+ * pcos-fade-slide-in — Component entrance
+ * Used by: Toast, Modal, Dropdown, any entering component.
+ */
+@keyframes pcos-fade-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/**
+ * pcos-fade-slide-out — Component exit
+ */
+@keyframes pcos-fade-slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/**
+ * pcos-fade-in — Simple fade, no movement
+ * Used by: ResponseCard content reveal, MemoryTrace expansion.
+ */
+@keyframes pcos-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/**
+ * pcos-shimmer — Skeleton loading sweep
+ * Applied to .pcos-skeleton elements during data fetch.
+ */
+@keyframes pcos-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* =============================================================================
+   UTILITY ANIMATION CLASSES
+   Applied directly or via Tailwind animate-* utilities.
+   ============================================================================= */
+
+.pcos-animate-fade-in {
+  animation: pcos-fade-in var(--duration-slow) var(--ease-out) both;
+}
+
+.pcos-animate-fade-slide-in {
+  animation: pcos-fade-slide-in var(--duration-slow) var(--ease-out) both;
+}
+
+.pcos-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-surface-hover) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: pcos-shimmer 1.5s var(--ease-in-out) infinite;
+  border-radius: var(--radius-md);
+}
+
+/* =============================================================================
+   REDUCED MOTION
+   Disables all motion; colour-based state communication is preserved.
+   ============================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  [data-ux-state] {
+    animation: none !important;
+    transition: color var(--duration-fast) var(--ease-out),
+                background-color var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out) !important;
+  }
+
+  .pcos-skeleton {
+    animation: none !important;
+    opacity: 0.6;
+  }
+
+  .pcos-animate-fade-in,
+  .pcos-animate-fade-slide-in {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
